@@ -21,3 +21,5 @@ We proposed a framework of federated learning algorithm to investigate the assoc
 
 
 ## dGEM-disparity workflow 
+<img width="800" alt="image" src="https://user-images.githubusercontent.com/38872447/174927996-2a4045fa-701e-4a89-b195-401f31da9a42.png">
+
