@@ -1,25 +1,27 @@
 
-A One-shot Federated Learning algorithm to quantify racial disparities in mortality rates with kidney transplant using US registry data from 35,497 patients across 201 hospitals
+A federated learning algorithm to quantify racial disparities in kidney graft failure rates using US registry data from 29,468 patients across 149 transplant centers
 ==============================================
 
 
 ## Outline
 1. Description
 2. dGEM-disparity workflow
+3. Data analysis results
 
 
 ## Description
-Kidney transplant is a renal replacement therapy for eligible patients with end-stage renal disease (ESRD)1–3. Unfortunately, the racial disparities in receipt of a transplanted kidney are observed for the Black across states4. Black patients are recognized to have lower graft survival rates compared with White patients5–8. Therefore, there is a great need in understanding, quantifying, and reducing the racial disparities in access to transplant and post-transplant outcomes for kidney transplant patients. 
-
-Site of care has been considered as a major contributor to disparities in kidney transplants due to differences in time on the transplant waiting list, access to live donor kidney transplants, care coordination with the donor organ procurement system, and acute rejection rates9. Since racial groups tend to live in certain areas, they may be subject to varying transplant care, leading to the difference in the outcomes (e.g., kidney graft failure)10. 
-
-To study the potential association between the site of care and racial disparity in kidney transplant graft failure with multi-site data, a counterfactual modeling method can be implemented11. By considering the underlying distribution in which patients of different races receive care, we can use a counterfactual model to simulate patients from a certain transplant center getting admitted to another. For example, with the proportions of White patients at the studied centers, we can simulate the reassignments for Black patients with the same proportions within the hospitals hypothetically. Under this scenario, the Black patients are pretended to attend the hospitals in the same distribution as the White patients. The observed and counterfactual kidney graft failure rates can be calculated, and the hypothesis is that the counterfactual graft failure rates would be lower than the observed graft failure rates for the Black patients if there exist site-of-care-associated racial disparities for the Black patients in kidney transplants.
-
-This counterfactual modeling has been recently implemented in the study by Asch et al (2020)12 to explore racial disparities for patients hospitalized with COVID-19 infection. In this study, a Health Quality Forum certified generalized linear mixed model (GLMM) was fitted on a centralized multi-site data to characterize the odds of the event with the adjustments for both fixed (e.g., the effects of patient- and hospital-level factors) and random effects (e.g., hospital-specific effects). In studying the effect of site of care on an event rate (e.g., COVID-19 mortality rate, kidney graft failure rate), the hospital-specific effects are essential in the calculation of counterfactual event rate. However, when the multi-site data cannot be centralized, the utilization of centralized modeling is not achievable, leading to challenges in estimating the hospital-specific effects. When the patient-level data are stored in a decentralized format and only aggregated data are allowed to be shared across hospitals, a decentralized algorithm for GLMM is in critical need.
-
-We proposed a framework of federated learning algorithm to investigate the association between the site of care and racial disparities in kidney graft failure for Black patients. We termed this framework as dGEM-disparity, which stands for decentralized algorithm for Generalized linear mixed Effect Model for disparity quantification. dGEM-disparity is a federated learning framework to effectively integrate heterogeneous multi-site data by fitting generalized mixed effect models. It allows us to investigate the site-of-care-associated racial disparity by considering the patients who are hypothetically admitted to other hospitals.
+In the United States, there exist racial disparities in kidney transplant access and post-transplant outcomes between Black and White patients. Site of care is considered a key contributor to the disparities. Using multi-site data to examine the effect of site of care on racial disparities, hospital-specific effects are essential and usually estimated with a generalized linear mixed effect model. However, due to regulations for protecting patients’ privacy, patient-level data typically cannot be shared across centers/hospitals. As a result, we developed a federated learning framework, dGEM-disparity (decentralized algorithm for Generalized linear mixed Effect Model for disparity quantification). Consisting of two parts, dGEM-disparity first provides accurately estimated common effects and calibrated hospital-specific effects by requiring only aggregated data from each center, and then adopts a counterfactual modeling approach to assess whether the graft failure rates differ if Black patients had been admitted at transplant centers in the same distribution as White patients were admitted. With the Organ Procurement and Transplantation Network (OPTN) registry data collected on 35,497 patients from 200 transplant centers, we found that if Black patients had been admitted to the centers following the distribution of White patients, 29 fewer per 10,000 Black patients (95% CI: [27, 32]) would die or have graft failure within one year after receiving a kidney transplant on average. Our proposed dGEM-disparity is generally applicable to other disparities research related to differential access to care. 
 
 
 ## dGEM-disparity workflow 
-<img width="800" alt="image" src="https://user-images.githubusercontent.com/38872447/174927996-2a4045fa-701e-4a89-b195-401f31da9a42.png">
+<img width="700" alt="image" src="https://user-images.githubusercontent.com/38872447/181802378-8a1499ce-0490-421e-8fc5-d6563da25543.png">
+
+Workflow of the proposed decentralized algorithm for generalized mixed effect models framework for disparity quantification -- dGEM-disparity. This framework includes two main parts. Part I: the dGEM algorithm includes the initialization of the common effects (i.e., association between outcome and covariates) (Step I) and the estimation of center-effects (Step II) with the meta-analysis estimates of the common effects, following with a center-level calibration via shrinkage estimator. Part II, the counterfactual rates for disparity quantification are calculated with the estimates from Part I. The details of Step III in Part II are presented in the following section.
+
+
+## Data analysis results
+<img width="700" alt="image" src="https://user-images.githubusercontent.com/38872447/181802626-548d5cc2-b295-4c11-95a5-8b493564fa88.png">
+
+
+The observed graft failure rate for the Black patients was 8.60%. The estimated counterfactual graft failure rate decreased by 0.29% (95% CI, [0.27%, 0.32%]), down to 8.31%. This means that if Black patients had been admitted to the centers following the distribution of White patients, 29 fewer per 10,000 Black patients (95% CI: [27, 32]) would have died or had graft failure within one year after receiving a kidney transplant on average.
 
